@@ -1,12 +1,16 @@
-import requests
+"""Init"""
 import re
+import requests
 
 
 class GitHubClient:
+    """GitHubClient"""
+
     def __init__(self, api_token):
         self.api_token = api_token
-        self.auth_headers = {'Authorization': 'token {}'.format(self.api_token)}
-        
+        self.auth_headers = {
+            'Authorization': 'token {}'.format(self.api_token)}
+
         self.api_root = 'https://api.github.com'
         self.api_repo = self.api_root + '/repos/{}/{}'
         self.api_branches = self.api_repo + '/branches'
@@ -42,12 +46,13 @@ class GitHubClient:
                 results = page_of_results
             if 'Link' not in response.headers:
                 break
-            links = GitHubClient.decompose_link_header(response.headers.get('Link'))
+            links = GitHubClient.decompose_link_header(
+                response.headers.get('Link'))
             if 'next' not in links:
                 break
             uri = links.get('next')
         if pages == max_pages:
-            print("WARNING: max_pages of {} exceeded.".format(max_pages))
+            print "WARNING: max_pages of {} exceeded.".format(max_pages)
         return results
 
     @staticmethod
@@ -62,15 +67,19 @@ class GitHubClient:
         """
         m = re.findall('([<]([^>]+)[>]; rel="(\w+)")+', header)
         return {x[2]: x[1] for x in m}
-    
+
     def get_branches(self, account, repo):
+        """get_branches"""
         return self._get(self.api_branches.format(account, repo), paginated=True)
-    
+
     def get_tags(self, account, repo):
+        """get_tags"""
         return self._get(self.api_tags.format(account, repo), paginated=True)
-    
+
     def get_pulls(self, account, repo):
+        """get_pulls"""
         return self._get(self.api_pulls.format(account, repo), paginated=True)
 
     def get_compare(self, account, repo, base, head):
+        """get_compare"""
         return self._get(self.api_compare.format(account, repo, base=base, head=head))
