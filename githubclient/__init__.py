@@ -52,7 +52,7 @@ class GitHubClient:
                 break
             uri = links.get('next')
         if pages == max_pages:
-            print "WARNING: max_pages of {} exceeded.".format(max_pages)
+            print("WARNING: max_pages of {} exceeded.".format(max_pages))
         return results
 
     @staticmethod
